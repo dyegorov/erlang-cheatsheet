@@ -27,3 +27,7 @@ Variables are immutable:
 3> X = 3.
 ** exception error: no match of right hand side value 3
 ```
+## pattern matching
+left = right
+* `right` is computed
+* `left` tries to match
