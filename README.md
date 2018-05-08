@@ -122,3 +122,145 @@ Strings are just lists of integers:
 22> [J,O,H,N].
 "John"
 ```
+## module
+* *.erl
+* compiles into *.beam
+* exports functions with arity (number of args)
+* imports functions with arity
+```
+-module(geometry).
+-export([area/1]).
+-import(lists, [map/2, sum/1]).
+area({rectangle, Width, Ht}) -> Width * Ht;
+area({circle, R}) -> 3.14159 * R * R.
+```
+compile and use it:
+```
+1> c(geometry).
+{ok,geometry}
+2> geometry:area({rectangle, 10, 5}).
+50
+3> geometry:area({circle, 1.4}).
+6.15752
+```
+## commas, dots and semicolons
+* `,` separates arguments
+* `.` separates functions and expressions
+* `;` separates different clauses
+```
+Pattern1 ->
+  Expressions1;
+Pattern2 ->
+  Expressions2;
+```
+## function arity
+Is a number of function arguments
+Use helpers with the same name:
+```
+sum(L) -> sum(L, 0).
+sum([], N) -> N;
+sum([H|T], N) -> sum(T, H+N).
+```
+## anonymous functions (funs)
+```
+8> Double = fun(X) -> 2*X end.
+#Fun<erl_eval.6.118419387>
+9> Double(4).
+8
+```
+Higher order function - returns other functions or uses functions as arguments
+```
+10> Even = fun(X) -> (X rem 2) =:= 0 end.
+#Fun<erl_eval.6.118419387>
+11> Even(8).
+true
+12> lists:map(Even, [1,2,3,4,5,6,7,8]).
+[false,true,false,true,false,true,false,true]
+13> lists:filter(Even, [1,2,3,4,5,6,7,8]).
+[2,4,6,8]
+```
+## for loop
+there is no for loop in erlang) but we can create it:
+```
+for(Max, Max, F) -> [F(Max)];
+for(I, Max, F) -> [F(I)|for(I+1, Max, F)].
+```
+
+## list comprehensions
+```
+[F(X) || X <- L].
+```
+Means map f(x) to L.
+```
+1> L = [1,2,3,4,5].
+[1,2,3,4,5]
+2> lists:map(fun(X) -> 2*X end, L).
+[2,4,6,8,10]
+3> [2*X || X <- L].
+[2,4,6,8,10]
+```
+Most 
+```
+[X || Qualifier1, Qualifier2, ...]
+```
+Qualifier is:
+* Generator. Pattern <- ListExpression.
+* Filter. Return true or false.
+```
+EvenNumbers = [N || N <- [1, 2, 3, 4], N rem 2 == 0]. % [2, 4]
+```
+Generator can also filter via pattern matching
+```
+1> [ X || {a, X} <- [{a,1},{b,2},{c,3},{a,4},hello,"wow"]].
+[1,4]
+```
+## arithmetic expressions
+1. +X, -X (unary)
+2. X*Y, X/Y, bnot X (bit not), X div Y (integer division), X rem Y (integer remainder), X band Y (bit and)
+3. X+Y, X-Y, X bor Y (bit or), X bxor Y (bit excl or), X bsl N (bit shift left), X bsr N (bit shift right)
+
+## guards
+You can use guards in the heads of function definitions where they areintroduced by the `when` keyword, or you can use them at any place in the
+language where an expression is allowed.
+```
+max(X, Y) when X > Y -> X;
+max(X, Y) -> Y.
+```
+A guard is a series of guard expressions, separated by commas (`,`).
+The guard `GuardExpr1, GuardExpr2, ..., GuardExprN` is true if all the guard
+expressions `GuardExpr1`, `GuardExpr2`, ..., `GuardExprN` evaluate to `true`.
+```
+is_cat(A) when is_atom(A), A =:= cat -> true;
+is_cat(A) -> false.
+is_dog(A) when is_atom(A), A =:= dog -> true;
+is_dog(A) -> false.
+```
+Control predicates:
+```
+is_atom(X), is_binary(X), is_constant(X), is_float(X), is_function(X), is_function(X,N) (with arity N)
+is_integer(X), is_list(X), is_number(X), is_pid(X), is_port(X), is_reference(X), is_tuple(X)
+is_record(X, Tag), is_record(X,Tag,N)
+```
+`true` guard is used as 'others' or 'default'
+```
+if
+Guard -> Expressions;
+Guard -> Expressions;
+...
+true -> Expressions
+end
+```
+
+## records
+```
+-record(Name, {
+%% the next two keys have default values
+key1 = Default1,
+key2 = Default2,
+...
+%% The next line is equivalent to
+%% key3 = undefined
+key3,
+...
+}).
+```
