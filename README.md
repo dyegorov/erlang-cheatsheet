@@ -143,7 +143,7 @@ joe
 ```
 ## list
 * `[1,2,3,4,5]` is a list
-* Consist of head (1st element) and tail (all other elements as list): [H|T]
+* Consist of head (1st element) and tail (all other elements as list): [Head|Tail] or [H|T]
 * `[]` is empty list
 Create list
 ```
